@@ -102,6 +102,15 @@
             }
         }
 
+        @keyframes heartSway {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(45deg);
+            }
+            50% {
+                transform: translateY(0) translateX(20px) rotate(45deg);
+            }
+        }
+
         body {
             background: linear-gradient(135deg, #ffe6ee 0%, #ffc2d1 50%, #ff9eb5 100%);
             background-attachment: fixed;
@@ -149,23 +158,32 @@
             overflow: hidden;
         }
         
-        .heart-small {
+        /* 统一的爱心样式 - 确保正确的爱心形状 */
+        .heart-shape {
             position: absolute;
-            width: 20px;
-            height: 20px;
             background-color: #ff3e6c;
             transform: rotate(45deg);
             opacity: 0.7;
         }
 
-        .heart-small:before,
-        .heart-small:after {
+        .heart-shape:before,
+        .heart-shape:after {
             content: '';
-            width: 20px;
-            height: 20px;
             background-color: #ff3e6c;
             border-radius: 50%;
             position: absolute;
+        }
+        
+        /* 小爱心样式 */
+        .heart-small {
+            width: 20px;
+            height: 20px;
+        }
+
+        .heart-small:before,
+        .heart-small:after {
+            width: 20px;
+            height: 20px;
         }
 
         .heart-small:before {
@@ -176,6 +194,65 @@
         .heart-small:after {
             top: 0;
             left: -10px;
+        }
+        
+        /* 下落爱心样式 */
+        .falling-heart {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #ff3e6c;
+            transform: rotate(45deg);
+        }
+
+        .falling-heart:before,
+        .falling-heart:after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background-color: #ff3e6c;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .falling-heart:before {
+            top: -7.5px;
+            left: 0;
+        }
+
+        .falling-heart:after {
+            top: 0;
+            left: -7.5px;
+        }
+        
+        /* 庆祝爱心样式 */
+        .celebration-heart {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: #ff3e6c;
+            transform: rotate(45deg);
+            opacity: 0.9;
+        }
+
+        .celebration-heart:before,
+        .celebration-heart:after {
+            content: '';
+            width: 25px;
+            height: 25px;
+            background-color: #ff3e6c;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .celebration-heart:before {
+            top: -12.5px;
+            left: 0;
+        }
+
+        .celebration-heart:after {
+            top: 0;
+            left: -12.5px;
         }
         
         /* 模态框固定定位 */
@@ -603,34 +680,56 @@
             }
             
             // 创建下落的爱心元素
-            function createHeartElement(type = 'fall') {
+            function createFallingHeart() {
+                // 创建容器div
+                const heartContainer = document.createElement('div');
+                heartContainer.className = 'heart-fall';
+                
+                // 创建爱心元素
                 const heart = document.createElement('div');
-                heart.className = 'heart-small heart-fall';
+                heart.className = 'falling-heart';
                 
-                if (type === 'fall') {
-                    // 下落爱心
-                    const size = 15 + Math.random() * 15;
-                    heart.style.width = `${size}px`;
-                    heart.style.height = `${size}px`;
-                    heart.style.left = `${Math.random() * 100}vw`;
-                    heart.style.top = '-20px';
-                    heart.style.opacity = 0.6 + Math.random() * 0.4;
-                    heart.style.animation = `heartFall ${3 + Math.random() * 4}s linear forwards`;
-                    // 添加随机摇摆
-                    heart.style.transform = `rotate(45deg) translateX(${Math.random() * 40 - 20}px)`;
-                } else if (type === 'celebration') {
-                    // 庆祝爱心
-                    const size = 10 + Math.random() * 20;
-                    heart.style.width = `${size}px`;
-                    heart.style.height = `${size}px`;
-                    heart.style.left = `${Math.random() * 100}vw`;
-                    heart.style.top = `${Math.random() * 100}vh`;
-                    heart.style.opacity = 0.8;
-                    heart.style.transformOrigin = 'center center';
-                    heart.style.animation = `celebrationHeart ${1 + Math.random() * 2}s ease-out forwards`;
-                }
+                // 设置初始位置
+                const left = Math.random() * 100;
+                heartContainer.style.left = `${left}vw`;
+                heartContainer.style.top = '-20px';
                 
-                return heart;
+                // 设置动画
+                const fallDuration = 3 + Math.random() * 4;
+                const swayDuration = 2 + Math.random() * 2;
+                
+                heartContainer.style.animation = `heartFall ${fallDuration}s linear forwards, heartSway ${swayDuration}s ease-in-out infinite`;
+                
+                // 添加到容器
+                heartContainer.appendChild(heart);
+                return heartContainer;
+            }
+            
+            // 创建庆祝爱心元素
+            function createCelebrationHeart() {
+                // 创建容器div
+                const heartContainer = document.createElement('div');
+                heartContainer.className = 'heart-fall';
+                
+                // 创建爱心元素
+                const heart = document.createElement('div');
+                heart.className = 'celebration-heart';
+                
+                // 设置位置（中心点定位）
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                
+                heartContainer.style.left = `${left}vw`;
+                heartContainer.style.top = `${top}vh`;
+                heartContainer.style.transform = 'translate(-50%, -50%)';
+                
+                // 设置动画
+                const animDuration = 1 + Math.random() * 2;
+                heart.style.animation = `celebrationHeart ${animDuration}s ease-out forwards`;
+                
+                // 添加到容器
+                heartContainer.appendChild(heart);
+                return heartContainer;
             }
             
             // 显示庆祝效果
@@ -641,50 +740,50 @@
                 }
                 
                 // 创建庆祝爱心
-                for (let i = 0; i < 80; i++) {
+                for (let i = 0; i < 60; i++) {
                     setTimeout(() => {
-                        const heart = createHeartElement('celebration');
-                        heartsContainer.appendChild(heart);
+                        const heartContainer = createCelebrationHeart();
+                        heartsContainer.appendChild(heartContainer);
                         
                         // 动画结束后移除
                         setTimeout(() => {
-                            if (heart.parentNode) {
-                                heart.parentNode.removeChild(heart);
+                            if (heartContainer.parentNode) {
+                                heartContainer.parentNode.removeChild(heartContainer);
                             }
                         }, 3000);
-                    }, i * 80);
+                    }, i * 100);
                 }
                 
                 // 创建下落爱心雨
                 setTimeout(() => {
-                    for (let i = 0; i < 50; i++) {
+                    for (let i = 0; i < 40; i++) {
                         setTimeout(() => {
-                            const heart = createHeartElement('fall');
-                            heartsContainer.appendChild(heart);
+                            const heartContainer = createFallingHeart();
+                            heartsContainer.appendChild(heartContainer);
                             
                             // 动画结束后移除
                             setTimeout(() => {
-                                if (heart.parentNode) {
-                                    heart.parentNode.removeChild(heart);
+                                if (heartContainer.parentNode) {
+                                    heartContainer.parentNode.removeChild(heartContainer);
                                 }
                             }, 8000);
                         }, i * 200);
                     }
-                }, 2000);
+                }, 1500);
             }
             
             // 创建爱心雨效果（弹窗打开时）
             function createHearts() {
                 // 创建下落爱心
-                for (let i = 0; i < 30; i++) {
+                for (let i = 0; i < 20; i++) {
                     setTimeout(() => {
-                        const heart = createHeartElement('fall');
-                        heartsContainer.appendChild(heart);
+                        const heartContainer = createFallingHeart();
+                        heartsContainer.appendChild(heartContainer);
                         
                         // 动画结束后移除
                         setTimeout(() => {
-                            if (heart.parentNode) {
-                                heart.parentNode.removeChild(heart);
+                            if (heartContainer.parentNode) {
+                                heartContainer.parentNode.removeChild(heartContainer);
                             }
                         }, 8000);
                     }, i * 300);
