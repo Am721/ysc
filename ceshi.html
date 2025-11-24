@@ -45,6 +45,11 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+            .heart-fall {
+                position: absolute;
+                pointer-events: none;
+                z-index: 45;
+            }
         }
 
         @keyframes heartbeat {
@@ -71,9 +76,36 @@
             }
         }
 
+        @keyframes heartFall {
+            0% {
+                transform: translateY(-20px) rotate(45deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes celebrationHeart {
+            0% {
+                transform: translate(-50%, -50%) rotate(45deg) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) rotate(45deg) scale(1.5);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(45deg) scale(0);
+                opacity: 0;
+            }
+        }
+
         body {
             background: linear-gradient(135deg, #ffe6ee 0%, #ffc2d1 50%, #ff9eb5 100%);
             background-attachment: fixed;
+            overflow-x: hidden;
         }
 
         .heart {
@@ -105,6 +137,18 @@
             left: -25px;
         }
 
+        /* 爱心元素使用独立容器 */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 45;
+            overflow: hidden;
+        }
+        
         .heart-small {
             position: absolute;
             width: 20px;
@@ -133,14 +177,114 @@
             top: 0;
             left: -10px;
         }
+        
+        /* 模态框固定定位 */
+        #surpriseModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out;
+        }
+        
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .modal-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 2xl;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            position: relative;
+        }
+        
+        .modal-content.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* 按钮容器和按钮样式 */
+        .buttons-container {
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+        
+        /* 统一按钮样式 */
+        .modal-btn {
+            width: 140px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        #yesBtn {
+            background-color: #ff6b9d;
+            color: white;
+        }
+        
+        #yesBtn:hover {
+            background-color: #e83e8c;
+        }
+        
+        #noBtn {
+            position: relative;
+            background-color: #d1d5db;
+            color: #4b5563;
+            transform-origin: center;
+            z-index: 10;
+        }
+        
+        #noBtn:hover {
+            background-color: #9ca3af;
+        }
+        
+        .message {
+            transition: all 0.5s ease;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .message.show {
+            opacity: 1;
+            height: auto;
+            margin-top: 1rem;
+        }
     </style>
 </head>
-<body class="font-romantic min-h-screen overflow-x-hidden">
-    <!-- 浮动爱心装饰 -->
-    <div class="fixed top-20 left-10 heart-small float" style="animation-delay: 0s;"></div>
-    <div class="fixed top-40 right-20 heart-small float" style="animation-delay: 0.5s;"></div>
-    <div class="fixed bottom-40 left-20 heart-small float" style="animation-delay: 1s;"></div>
-    <div class="fixed bottom-20 right-10 heart-small float" style="animation-delay: 1.5s;"></div>
+<body class="font-romantic min-h-screen">
+    <!-- 爱心容器 -->
+    <div class="hearts-container" id="heartsContainer"></div>
 
     <div class="container mx-auto px-4 py-16 max-w-4xl">
         <!-- 标题部分 -->
@@ -183,18 +327,29 @@
             </section>
         </main>
 
-        <!-- 惊喜模态框 -->
-        <div id="surpriseModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-500">
-            <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform scale-90 transition-transform duration-300">
-                <div class="text-center">
-                    <div class="inline-block mb-4">
-                        <div class="heart mx-auto heart-beat"></div>
+        <!-- 惊喜模态框 - 完全固定定位 -->
+        <div id="surpriseModal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-wrapper">
+                <div class="modal-content">
+                    <div class="text-center">
+                        <div class="inline-block mb-4">
+                            <div class="heart mx-auto heart-beat"></div>
+                        </div>
+                        <h2 class="text-2xl font-bold text-love-dark mb-4">我爱你！</h2>
+                        <p class="text-gray-700 mb-6">愿意做我一辈子的女朋友吗？</p>
+                        <div class="buttons-container">
+                            <button id="yesBtn" class="modal-btn">
+                                我愿意 <i class="fa fa-heart ml-1"></i>
+                            </button>
+                            <button id="noBtn" class="modal-btn">
+                                不愿意 <i class="fa fa-times ml-1"></i>
+                            </button>
+                        </div>
+                        <div class="message text-red-500 text-sm animate-bounce">
+                            不接受也得接受哦！
+                        </div>
                     </div>
-                    <h2 class="text-2xl font-bold text-love-dark mb-4">我爱你！</h2>
-                    <p class="text-gray-700 mb-6">愿意做我一辈子的女朋友吗？</p>
-                    <button id="closeModal" class="px-6 py-3 bg-love hover:bg-love-dark text-white rounded-full font-bold transition-colors">
-                        我愿意 <i class="fa fa-heart ml-1"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -210,6 +365,7 @@
         // 滚动揭示效果
         document.addEventListener('DOMContentLoaded', function() {
             const reveals = document.querySelectorAll('.reveal');
+            const heartsContainer = document.getElementById('heartsContainer');
             
             function checkReveal() {
                 reveals.forEach(element => {
@@ -231,78 +387,361 @@
             // 惊喜模态框
             const surpriseBtn = document.getElementById('surpriseBtn');
             const surpriseModal = document.getElementById('surpriseModal');
-            const closeModal = document.getElementById('closeModal');
+            const modalContent = surpriseModal.querySelector('.modal-content');
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const modalBackdrop = surpriseModal.querySelector('.modal-backdrop');
+            const buttonsContainer = document.querySelector('.buttons-container');
+            const message = document.querySelector('.message');
+            
+            // 保存初始状态（只在页面加载时保存一次）
+            let yesBtnInitialState = {
+                cssText: yesBtn.style.cssText,
+                className: yesBtn.className
+            };
+            
+            let noBtnInitialState = {
+                position: noBtn.style.position,
+                width: noBtn.style.width,
+                left: noBtn.style.left,
+                top: noBtn.style.top,
+                transform: noBtn.style.transform,
+                cssText: noBtn.style.cssText,
+                className: noBtn.className
+            };
+            
+            // 不愿意按钮状态
+            let noBtnClicks = 0;
+            let isNoBtnMoved = false;
+            
+            // 完全重置两个按钮到初始状态
+            function resetAllButtons() {
+                // 重置"我愿意"按钮
+                yesBtn.className = yesBtnInitialState.className;
+                yesBtn.style.cssText = yesBtnInitialState.cssText;
+                
+                // 重置"不愿意"按钮
+                noBtnClicks = 0;
+                isNoBtnMoved = false;
+                noBtn.className = noBtnInitialState.className;
+                noBtn.style.cssText = noBtnInitialState.cssText;
+                noBtn.style.position = noBtnInitialState.position || 'relative';
+                noBtn.style.left = noBtnInitialState.left || '';
+                noBtn.style.top = noBtnInitialState.top || '';
+                noBtn.style.transform = noBtnInitialState.transform || '';
+                noBtn.style.opacity = '1';
+                noBtn.style.display = 'block';
+                
+                // 隐藏消息
+                message.classList.remove('show');
+            }
+            
+            // 获取元素的精确位置信息
+            function getBoundingBox(element) {
+                const rect = element.getBoundingClientRect();
+                const computedStyle = window.getComputedStyle(element);
+                
+                // 计算元素的实际占用空间（包括边框和内边距）
+                const borderLeft = parseFloat(computedStyle.borderLeftWidth) || 0;
+                const borderRight = parseFloat(computedStyle.borderRightWidth) || 0;
+                const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0;
+                const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
+                
+                return {
+                    left: rect.left,
+                    top: rect.top,
+                    right: rect.right,
+                    bottom: rect.bottom,
+                    width: rect.width,
+                    height: rect.height,
+                    // 内容区域
+                    contentWidth: rect.width - borderLeft - borderRight - paddingLeft - paddingRight,
+                    contentHeight: rect.height - parseFloat(computedStyle.borderTopWidth) - parseFloat(computedStyle.borderBottomWidth) - parseFloat(computedStyle.paddingTop) - parseFloat(computedStyle.paddingBottom),
+                    // 相对于父元素的位置
+                    offsetLeft: element.offsetLeft,
+                    offsetTop: element.offsetTop
+                };
+            }
+            
+            // 获取可用区域范围
+            function getAvailableArea() {
+                const containerBox = getBoundingBox(buttonsContainer);
+                const noBtnBox = getBoundingBox(noBtn);
+                
+                return {
+                    // 按钮容器内的可用区域（相对于容器）
+                    minX: 10, // 左边距
+                    maxX: containerBox.width - noBtnBox.width - 10, // 右边距
+                    minY: 10, // 上边距
+                    maxY: containerBox.height - noBtnBox.height - 10, // 下边距
+                    // 安全边界
+                    padding: 10
+                };
+            }
+            
+            // 检查位置是否与"我愿意"按钮重叠
+            function isPositionValid(x, y) {
+                const yesBtnBox = getBoundingBox(yesBtn);
+                const noBtnBox = getBoundingBox(noBtn);
+                const containerBox = getBoundingBox(buttonsContainer);
+                
+                // 转换为相对于容器的坐标
+                const yesBtnX = yesBtnBox.offsetLeft;
+                const yesBtnY = yesBtnBox.offsetTop;
+                
+                // 计算碰撞区域
+                const collisionPadding = 15; // 碰撞检测的额外间距
+                const noBtnRight = x + noBtnBox.width + collisionPadding;
+                const noBtnBottom = y + noBtnBox.height + collisionPadding;
+                const yesBtnRight = yesBtnX + yesBtnBox.width + collisionPadding;
+                const yesBtnBottom = yesBtnY + yesBtnBox.height + collisionPadding;
+                
+                // 检查是否重叠
+                const isOverlap = !(
+                    noBtnRight < yesBtnX ||
+                    x > yesBtnRight ||
+                    noBtnBottom < yesBtnY ||
+                    y > yesBtnBottom
+                );
+                
+                return !isOverlap;
+            }
+            
+            // 获取安全的随机位置
+            function getSafeRandomPosition() {
+                const area = getAvailableArea();
+                const maxAttempts = 200;
+                let attempts = 0;
+                
+                while (attempts < maxAttempts) {
+                    // 在可用区域内生成随机位置
+                    const randomX = Math.floor(Math.random() * (area.maxX - area.minX + 1)) + area.minX;
+                    const randomY = Math.floor(Math.random() * (area.maxY - area.minY + 1)) + area.minY;
+                    
+                    // 确保位置在边界内
+                    const clampedX = Math.max(area.minX, Math.min(randomX, area.maxX));
+                    const clampedY = Math.max(area.minY, Math.min(randomY, area.maxY));
+                    
+                    // 检查是否与"我愿意"按钮重叠
+                    if (isPositionValid(clampedX, clampedY)) {
+                        return { x: clampedX, y: clampedY };
+                    }
+                    
+                    attempts++;
+                }
+                
+                // 如果多次尝试失败，返回一个固定的安全位置
+                return {
+                    x: area.minX + 20,
+                    y: area.minY + 80 // 在"我愿意"按钮下方
+                };
+            }
+            
+            // 防止背景滚动
+            function toggleBodyScroll(enable) {
+                document.body.style.overflow = enable ? '' : 'hidden';
+                document.documentElement.style.overflow = enable ? '' : 'hidden';
+            }
+            
+            // 标记弹窗状态
+            let isModalOpen = false;
             
             surpriseBtn.addEventListener('click', function() {
-                surpriseModal.classList.remove('opacity-0', 'pointer-events-none');
-                surpriseModal.querySelector('div').classList.remove('scale-90');
-                surpriseModal.querySelector('div').classList.add('scale-100');
+                if (isModalOpen) return;
+                
+                // 重置按钮状态（但保持之前的移动位置）
+                if (isNoBtnMoved) {
+                    noBtnClicks = 0;
+                    message.classList.remove('show');
+                    noBtn.style.opacity = '1';
+                    noBtn.style.display = 'block';
+                } else {
+                    resetAllButtons();
+                }
+                
+                isModalOpen = true;
+                surpriseModal.style.pointerEvents = 'auto';
+                surpriseModal.style.opacity = '1';
+                toggleBodyScroll(false);
+                
+                // 确保模态框动画正确触发
+                setTimeout(() => {
+                    modalContent.classList.add('show');
+                }, 10);
                 
                 // 创建爱心雨效果
                 createHearts();
             });
             
-            closeModal.addEventListener('click', function() {
-                surpriseModal.classList.add('opacity-0', 'pointer-events-none');
-                surpriseModal.querySelector('div').classList.remove('scale-100');
-                surpriseModal.querySelector('div').classList.add('scale-90');
-            });
-            
-            // 点击模态框背景关闭
-            surpriseModal.addEventListener('click', function(e) {
-                if (e.target === surpriseModal) {
-                    closeModal.click();
-                }
-            });
-            
-            // 创建爱心雨效果
-            function createHearts() {
-                const container = document.body;
+            function closeModalFunc() {
+                if (!isModalOpen) return;
                 
-                for (let i = 0; i < 50; i++) {
+                isModalOpen = false;
+                modalContent.classList.remove('show');
+                
+                // 等待动画完成后隐藏
+                setTimeout(() => {
+                    surpriseModal.style.opacity = '0';
                     setTimeout(() => {
-                        const heart = document.createElement('div');
-                        heart.className = 'heart-small fixed';
+                        surpriseModal.style.pointerEvents = 'none';
+                    }, 300);
+                }, 100);
+                
+                toggleBodyScroll(true);
+            }
+            
+            // 点击"我愿意"按钮的处理函数
+            function handleYesBtnClick() {
+                // 完全重置所有按钮
+                resetAllButtons();
+                
+                // 关闭弹窗
+                closeModalFunc();
+                
+                // 显示庆祝效果
+                showCelebrationEffect();
+            }
+            
+            // 创建下落的爱心元素
+            function createHeartElement(type = 'fall') {
+                const heart = document.createElement('div');
+                heart.className = 'heart-small heart-fall';
+                
+                if (type === 'fall') {
+                    // 下落爱心
+                    const size = 15 + Math.random() * 15;
+                    heart.style.width = `${size}px`;
+                    heart.style.height = `${size}px`;
+                    heart.style.left = `${Math.random() * 100}vw`;
+                    heart.style.top = '-20px';
+                    heart.style.opacity = 0.6 + Math.random() * 0.4;
+                    heart.style.animation = `heartFall ${3 + Math.random() * 4}s linear forwards`;
+                    // 添加随机摇摆
+                    heart.style.transform = `rotate(45deg) translateX(${Math.random() * 40 - 20}px)`;
+                } else if (type === 'celebration') {
+                    // 庆祝爱心
+                    const size = 10 + Math.random() * 20;
+                    heart.style.width = `${size}px`;
+                    heart.style.height = `${size}px`;
+                    heart.style.left = `${Math.random() * 100}vw`;
+                    heart.style.top = `${Math.random() * 100}vh`;
+                    heart.style.opacity = 0.8;
+                    heart.style.transformOrigin = 'center center';
+                    heart.style.animation = `celebrationHeart ${1 + Math.random() * 2}s ease-out forwards`;
+                }
+                
+                return heart;
+            }
+            
+            // 显示庆祝效果
+            function showCelebrationEffect() {
+                // 清空之前的爱心元素
+                while (heartsContainer.firstChild) {
+                    heartsContainer.removeChild(heartsContainer.firstChild);
+                }
+                
+                // 创建庆祝爱心
+                for (let i = 0; i < 80; i++) {
+                    setTimeout(() => {
+                        const heart = createHeartElement('celebration');
+                        heartsContainer.appendChild(heart);
                         
-                        // 随机位置
-                        const left = Math.random() * 100;
-                        const top = -20;
-                        
-                        heart.style.left = `${left}vw`;
-                        heart.style.top = `${top}px`;
-                        heart.style.opacity = Math.random() * 0.8 + 0.2;
-                        heart.style.transform = `rotate(45deg) scale(${Math.random() * 0.8 + 0.4})`;
-                        
-                        container.appendChild(heart);
-                        
-                        // 动画掉落
-                        animateHeart(heart);
-                        
-                        // 移除元素
+                        // 动画结束后移除
                         setTimeout(() => {
-                            heart.remove();
-                        }, 5000);
-                    }, i * 100);
+                            if (heart.parentNode) {
+                                heart.parentNode.removeChild(heart);
+                            }
+                        }, 3000);
+                    }, i * 80);
+                }
+                
+                // 创建下落爱心雨
+                setTimeout(() => {
+                    for (let i = 0; i < 50; i++) {
+                        setTimeout(() => {
+                            const heart = createHeartElement('fall');
+                            heartsContainer.appendChild(heart);
+                            
+                            // 动画结束后移除
+                            setTimeout(() => {
+                                if (heart.parentNode) {
+                                    heart.parentNode.removeChild(heart);
+                                }
+                            }, 8000);
+                        }, i * 200);
+                    }
+                }, 2000);
+            }
+            
+            // 创建爱心雨效果（弹窗打开时）
+            function createHearts() {
+                // 创建下落爱心
+                for (let i = 0; i < 30; i++) {
+                    setTimeout(() => {
+                        const heart = createHeartElement('fall');
+                        heartsContainer.appendChild(heart);
+                        
+                        // 动画结束后移除
+                        setTimeout(() => {
+                            if (heart.parentNode) {
+                                heart.parentNode.removeChild(heart);
+                            }
+                        }, 8000);
+                    }, i * 300);
                 }
             }
             
-            function animateHeart(heart) {
-                let top = parseInt(heart.style.top);
-                const speed = Math.random() * 2 + 1;
-                const sway = Math.random() * 4 - 2;
+            // 不愿意按钮点击事件
+            noBtn.addEventListener('click', function(e) {
+                e.preventDefault();
                 
-                const interval = setInterval(() => {
-                    top += speed;
-                    const left = parseFloat(heart.style.left) + sway;
-                    
-                    heart.style.top = `${top}px`;
-                    heart.style.left = `${left}vw`;
-                    
-                    if (top > window.innerHeight) {
-                        clearInterval(interval);
-                    }
-                }, 30);
-            }
+                // 标记按钮已移动
+                isNoBtnMoved = true;
+                
+                // 增加点击次数
+                noBtnClicks++;
+                
+                // 最多点击8次
+                if (noBtnClicks >= 8) {
+                    // 隐藏按钮并显示消息
+                    noBtn.style.opacity = '0';
+                    setTimeout(() => {
+                        noBtn.style.display = 'none';
+                        message.classList.add('show');
+                    }, 300);
+                    return;
+                }
+                
+                // 改变按钮大小
+                const scale = 1 - (noBtnClicks * 0.1);
+                noBtn.style.transform = `scale(${scale})`;
+                
+                // 设置为绝对定位（如果还不是）
+                if (noBtn.style.position !== 'absolute') {
+                    noBtn.style.position = 'absolute';
+                }
+                
+                // 获取安全的随机位置
+                const pos = getSafeRandomPosition();
+                
+                // 设置新位置（确保在可视范围内）
+                noBtn.style.left = `${pos.x}px`;
+                noBtn.style.top = `${pos.y}px`;
+            });
+            
+            // 绑定事件处理函数
+            yesBtn.addEventListener('click', handleYesBtnClick);
+            modalBackdrop.addEventListener('click', closeModalFunc);
+            
+            // 键盘ESC关闭
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isModalOpen) {
+                    closeModalFunc();
+                }
+            });
+            
+            // 初始化
+            surpriseModal.style.pointerEvents = 'none';
         });
     </script>
 </body>
