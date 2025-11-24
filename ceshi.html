@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>致我最爱的你</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        love: {
+                            light: '#ff9eb5',
+                            DEFAULT: '#ff6b9d',
+                            dark: '#e83e8c',
+                        },
+                        heart: '#ff3e6c',
+                    },
+                    fontFamily: {
+                        romantic: ['Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .heart-beat {
+                animation: heartbeat 1.5s ease-in-out infinite;
+            }
+            .float {
+                animation: float 3s ease-in-out infinite;
+            }
+            .reveal {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: opacity 0.8s ease, transform 0.8s ease;
+            }
+            .reveal.active {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1);
+            }
+            40% {
+                transform: scale(1);
+            }
+            60% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe6ee 0%, #ffc2d1 50%, #ff9eb5 100%);
+            background-attachment: fixed;
+        }
+
+        .heart {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            background-color: #ff3e6c;
+            transform: rotate(45deg);
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .heart:before,
+        .heart:after {
+            content: '';
+            width: 50px;
+            height: 50px;
+            background-color: #ff3e6c;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .heart:before {
+            top: -25px;
+            left: 0;
+        }
+
+        .heart:after {
+            top: 0;
+            left: -25px;
+        }
+
+        .heart-small {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff3e6c;
+            transform: rotate(45deg);
+            opacity: 0.7;
+        }
+
+        .heart-small:before,
+        .heart-small:after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: #ff3e6c;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .heart-small:before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart-small:after {
+            top: 0;
+            left: -10px;
+        }
+    </style>
+</head>
+<body class="font-romantic min-h-screen overflow-x-hidden">
+    <!-- 浮动爱心装饰 -->
+    <div class="fixed top-20 left-10 heart-small float" style="animation-delay: 0s;"></div>
+    <div class="fixed top-40 right-20 heart-small float" style="animation-delay: 0.5s;"></div>
+    <div class="fixed bottom-40 left-20 heart-small float" style="animation-delay: 1s;"></div>
+    <div class="fixed bottom-20 right-10 heart-small float" style="animation-delay: 1.5s;"></div>
+
+    <div class="container mx-auto px-4 py-16 max-w-4xl">
+        <!-- 标题部分 -->
+        <header class="text-center mb-16 reveal">
+            <div class="inline-block mb-4">
+                <div class="heart mx-auto heart-beat"></div>
+            </div>
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-love-dark mb-4 text-shadow">致我最爱的你</h1>
+            <p class="text-xl text-gray-700 italic">遇见你，是我此生最美的风景</p>
+        </header>
+
+        <!-- 内容部分 -->
+        <main class="space-y-12">
+            <section class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg reveal">
+                <h2 class="text-2xl font-bold text-love mb-6 border-b border-love/30 pb-2">第一次遇见你</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    宝宝，记得第一次遇见你的时候，我们只是为了做游戏，但是我很快就发现，你身上有许多吸引我的地方，我们性格和三观都一致的，爱好也一致，所以让我不知不觉就喜欢上你了。现在我不想这个游戏结束，因为它已经不是游戏了，而是我们美好的未来，陪我一直走下去好吗？
+                </p>
+            </section>
+
+            <section class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg reveal">
+                <h2 class="text-2xl font-bold text-love mb-6 border-b border-love/30 pb-2">和你在一起的时光</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    乖乖，和你相处的时候，永远都很快乐，虽然还没有见到面，但是我真的很喜欢你，你超级好，温柔、善良、漂亮、善解人意、脾气好，我是不会弄丢这样的宝宝的。
+                </p>
+            </section>
+
+            <section class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg reveal">
+                <h2 class="text-2xl font-bold text-love mb-6 border-b border-love/30 pb-2">我想对你说</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    宝宝，你是我生命中最重要的人。我想和你一起走过春夏秋冬，一起经历人生的点点滴滴。我会用我的一生去爱你、呵护你，让你永远幸福快乐。
+                </p>
+            </section>
+
+            <!-- 惊喜按钮 -->
+            <section class="text-center reveal">
+                <button id="surpriseBtn" class="px-8 py-4 bg-love hover:bg-love-dark text-white rounded-full text-lg font-bold shadow-lg transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-love/50">
+                    <i class="fa fa-heart mr-2"></i>点击有惊喜
+                </button>
+            </section>
+        </main>
+
+        <!-- 惊喜模态框 -->
+        <div id="surpriseModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-500">
+            <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform scale-90 transition-transform duration-300">
+                <div class="text-center">
+                    <div class="inline-block mb-4">
+                        <div class="heart mx-auto heart-beat"></div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-love-dark mb-4">我爱你！</h2>
+                    <p class="text-gray-700 mb-6">愿意做我一辈子的女朋友吗？</p>
+                    <button id="closeModal" class="px-6 py-3 bg-love hover:bg-love-dark text-white rounded-full font-bold transition-colors">
+                        我愿意 <i class="fa fa-heart ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center mt-16 text-gray-600 reveal">
+            <p>永远爱你的人 ❤️</p>
+            <p class="text-sm mt-2">© 2025 专属我们的回忆</p>
+        </footer>
+    </div>
+
+    <script>
+        // 滚动揭示效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const reveals = document.querySelectorAll('.reveal');
+            
+            function checkReveal() {
+                reveals.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const elementVisible = 150;
+                    
+                    if (elementTop < window.innerHeight - elementVisible) {
+                        element.classList.add('active');
+                    }
+                });
+            }
+            
+            // 初始检查
+            checkReveal();
+            
+            // 滚动时检查
+            window.addEventListener('scroll', checkReveal);
+            
+            // 惊喜模态框
+            const surpriseBtn = document.getElementById('surpriseBtn');
+            const surpriseModal = document.getElementById('surpriseModal');
+            const closeModal = document.getElementById('closeModal');
+            
+            surpriseBtn.addEventListener('click', function() {
+                surpriseModal.classList.remove('opacity-0', 'pointer-events-none');
+                surpriseModal.querySelector('div').classList.remove('scale-90');
+                surpriseModal.querySelector('div').classList.add('scale-100');
+                
+                // 创建爱心雨效果
+                createHearts();
+            });
+            
+            closeModal.addEventListener('click', function() {
+                surpriseModal.classList.add('opacity-0', 'pointer-events-none');
+                surpriseModal.querySelector('div').classList.remove('scale-100');
+                surpriseModal.querySelector('div').classList.add('scale-90');
+            });
+            
+            // 点击模态框背景关闭
+            surpriseModal.addEventListener('click', function(e) {
+                if (e.target === surpriseModal) {
+                    closeModal.click();
+                }
+            });
+            
+            // 创建爱心雨效果
+            function createHearts() {
+                const container = document.body;
+                
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const heart = document.createElement('div');
+                        heart.className = 'heart-small fixed';
+                        
+                        // 随机位置
+                        const left = Math.random() * 100;
+                        const top = -20;
+                        
+                        heart.style.left = `${left}vw`;
+                        heart.style.top = `${top}px`;
+                        heart.style.opacity = Math.random() * 0.8 + 0.2;
+                        heart.style.transform = `rotate(45deg) scale(${Math.random() * 0.8 + 0.4})`;
+                        
+                        container.appendChild(heart);
+                        
+                        // 动画掉落
+                        animateHeart(heart);
+                        
+                        // 移除元素
+                        setTimeout(() => {
+                            heart.remove();
+                        }, 5000);
+                    }, i * 100);
+                }
+            }
+            
+            function animateHeart(heart) {
+                let top = parseInt(heart.style.top);
+                const speed = Math.random() * 2 + 1;
+                const sway = Math.random() * 4 - 2;
+                
+                const interval = setInterval(() => {
+                    top += speed;
+                    const left = parseFloat(heart.style.left) + sway;
+                    
+                    heart.style.top = `${top}px`;
+                    heart.style.left = `${left}vw`;
+                    
+                    if (top > window.innerHeight) {
+                        clearInterval(interval);
+                    }
+                }, 30);
+            }
+        });
+    </script>
+</body>
+</html>
